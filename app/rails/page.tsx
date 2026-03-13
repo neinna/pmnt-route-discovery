@@ -100,7 +100,7 @@ export default function RailsPage() {
                     <td className="px-6 py-4 text-xs font-medium text-gray-400 uppercase tracking-wider">{row.metric}</td>
                     {[row.sol, row.base, row.tempo, row.stellar].map((cell, i) => (
                       <td key={i} className="px-6 py-4">
-                        <div className={`font-semibold text-base mb-0.5 ${cell.good ? "text-green-600" : cell.warn ? "text-amber-500" : cell.bad ? "text-red-500" : "text-gray-700"}`}>
+                        <div className={`font-semibold text-base mb-0.5 ${'good' in cell && cell.good ? "text-green-600" : 'warn' in cell && cell.warn ? "text-amber-500" : 'bad' in cell && cell.bad ? "text-red-500" : "text-gray-700"}`}>
                           {cell.val}
                         </div>
                         <div className="text-xs text-gray-400 leading-relaxed">{cell.note}</div>

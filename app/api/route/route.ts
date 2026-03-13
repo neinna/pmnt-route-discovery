@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
   const key = cacheKey({ query: query.trim().toLowerCase() });
   const cached = responseCache.get(key);
   if (cached && Date.now() - cached.cachedAt < CACHE_TTL_MS) {
-    return NextResponse.json({ ...cached.result, cached: true, remaining });
+    return NextResponse.json({ ...(cached.result as Record<string, unknown>), cached: true, remaining });
   }
 
   const vendorSummary = vendors.vendors.map((v) => ({
@@ -147,7 +147,7 @@ Respond ONLY with a valid JSON object in this exact structure, no markdown, no p
     }
 
     const result = { ...parsed, remaining };
-    responseCache.set(key, { result, cachedAt: Date.now() });
+    const responseCache = new Map<string, { result: object; cachedAt: number }>();
 
     return NextResponse.json(result);
   } catch (err) {
