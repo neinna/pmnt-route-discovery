@@ -1,36 +1,53 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Payment Route Discovery
 
-## Getting Started
+Plain-language route intelligence for B2B cross-border payments. Describe a payment scenario, and the app compares stablecoin, crypto PSP, local PSP, and legacy rails for that corridor and amount.
 
-First, run the development server:
+- Live demo: https://pmnt-route-discovery.vercel.app
+- Built by: Long Tail Studio
+- Stack: Next.js, React, Tailwind CSS, Anthropic API
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## What It Does
+
+- Parses a payment scenario into amount, origin currency, destination country, destination currency, urgency, and sender context.
+- Compares vendors and rails from `data/vendors.json`.
+- Recommends 2-3 routes with estimated total cost, fee breakdown, settlement time, best-fit condition, and caveat.
+- Includes a blockchain rail comparison page for Solana, Base, Tempo, and Stellar.
+- Rate-limits requests to reduce abuse.
+
+Example prompts:
+
+```text
+Send $500K USD to our supplier in Mexico by end of week
+Pay a vendor in Brazil 200,000 USD, standard timing is fine
+Wire $2M from our US entity to our UK subsidiary today
+Monthly payroll: $80K to employees in the Philippines
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Product Thesis
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Cross-border payment decisions are usually buried in vendor pages, compliance assumptions, bank habits, and spreadsheet math. This prototype turns the first discovery step into a guided comparison: which rail is likely cheapest, fastest, and operationally realistic for a specific payment.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+It is not financial advice and does not execute payments. It is a routing and comparison tool.
 
-## Learn More
+## Architecture
 
-To learn more about Next.js, take a look at the following resources:
+- `app/page.tsx` renders the route-finder UI.
+- `app/api/route/route.ts` validates input, applies rate limiting, sends the vendor context to Claude, and returns structured JSON.
+- `data/vendors.json` stores the current vendor and rail assumptions.
+- `app/rails/page.tsx` compares blockchain rails for payment use cases.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Running Locally
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```bash
+git clone https://github.com/neinna/pmnt-route-discovery.git
+cd pmnt-route-discovery
+npm install
+cp .env.local.example .env.local
+npm run dev
+```
 
-## Deploy on Vercel
+Set `ANTHROPIC_API_KEY` in `.env.local`.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Status
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Prototype. The next useful improvements are source-backed vendor assumptions, durable caching, tests for the routing API, and a clearer evaluation set for payment scenarios.
